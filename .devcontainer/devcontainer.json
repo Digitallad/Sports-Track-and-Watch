@@ -1,0 +1,26 @@
+{
+  "name": "myapp-dev",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "api",
+  "workspaceFolder": "/app",
+  "remoteUser": "appuser",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": { "installZsh": false }
+  },
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": { "label": "API" }
+  },
+  "postCreateCommand": "python -m pip install -r /app/requirements.txt || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.copilot",
+        "github.copilot-chat",
+        "ms-azuretools.vscode-docker",
+        "ms-python.python"
+      ]
+    }
+  }
+}
