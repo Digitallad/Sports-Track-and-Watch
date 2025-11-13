@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     
     # Logging
     LOG_LEVEL: str = "INFO"
-    LOG_FILE: str = "logs/rugby_atlas.log"
+    LOG_FILE: str = ""  # Set to empty string to disable file logging
     
     # API
     API_PREFIX: str = "/api/v1"
