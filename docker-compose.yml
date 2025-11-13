@@ -5,20 +5,22 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    image: myapp/api:dev
+    image: rugby-atlas/api:dev
     env_file: .env
     environment:
-      - DATABASE_URL=postgresql://app:app@db:5432/app
-      - REDIS_URL=redis://cache:6379/0
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/rugby_atlas
+      - ENVIRONMENT=development
+      - DEBUG=true
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
-      cache:
-        condition: service_started
+    volumes:
+      # Mount source code for hot reload during development
+      - ./api/src:/app/src
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/healthz || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/health || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 10
@@ -26,20 +28,18 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      - POSTGRES_DB=app
-      - POSTGRES_USER=app
-      - POSTGRES_PASSWORD=app
+      - POSTGRES_DB=rugby_atlas
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d rugby_atlas"]
       interval: 5s
       timeout: 3s
       retries: 20
-
-  cache:
-    image: redis:7-alpine
-    command: ["redis-server", "--save", "", "--appendonly", "no"]
 
 volumes:
   db_data:
